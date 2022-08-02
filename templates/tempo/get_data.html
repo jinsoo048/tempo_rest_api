@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Tempo Backup Using REST API</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Create two equal columns that floats next to each other */
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Style the buttons */
+        .btn {
+            border: none;
+            outline: none;
+            padding: 12px 16px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #ddd;
+        }
+
+        .btn.active {
+            background-color: #666;
+            color: white;
+        }
+
+
+        /* Create two equal columns that floats next to each other */
+        .column {
+            float: left;
+            width: 50%;
+            padding: 10px;
+            height: 300px; /* Should be removed. Only for demonstration */
+        }
+
+        /* Clear floats after the columns */
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+
+        /* Style the header */
+        header {
+            background-color: #666;
+            padding: 30px;
+            text-align: center;
+            font-size: 35px;
+            color: white;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            padding: 2px 16px;
+        }
+
+        #Progress_Status {
+            width: 100%;
+            background-color: #ddd;
+        }
+
+        #myprogressBar {
+            width: 2%;
+            height: 20px;
+            background-color: #4CAF50;
+        }
+
+        #Progress_Status2 {
+            width: 100%;
+            background-color: #ddd;
+        }
+
+        #myprogressBar2 {
+            width: 2%;
+            height: 20px;
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+<div id="btnContainer">
+    <button class="btn" onclick="listView()"><i class="fa fa-bars"></i> List</button>
+    <button class="btn active" onclick="gridView()"><i class="fa fa-th-large"></i> Grid</button>
+</div>
+<br>
+
+<h2>템포 주요 데이터 백업</h2>
+<p>템포의 Worklog백업과 나머지 주요 데이터 일괄백업 기능</p>
+
+<div class="row">
+    <div class="column" style="background-color:#aaa;">
+        <div class="card">
+            <h3> Worklogs</h3>
+            <form action="/get_worklogs" method="post">
+                <label for="dateFrom">dateFrom:</label>
+                <input type="date" id="dateFrom" name="dateFrom"></input>
+                <label for="dateTo">dateTo:</label>
+                <input type="date" id="dateTo" name="dateTo"></input>
+
+                <input onclick="update()" type="submit" value="Save">
+
+                <div id="Progress_Status">
+                    <div id="myprogressBar"></div>
+                </div>
+
+                <script>
+                    function update() {
+                        var element = document.getElementById("myprogressBar");
+                        var width = 1;
+                        var identity = setInterval(scene, 10);
+
+                        function scene() {
+                            if (width >= 100) {
+                                clearInterval(identity);
+                            } else {
+                                width++;
+                                element.style.width = width + '%';
+                            }
+                        }
+                    }
+                </script>
+            </form>
+        </div>
+    </div>
+
+    <div class="column" style="background-color:#ddd;">
+
+        <div class="card">
+            <h3> ALL(Except Worklogs)</h3>
+            <form action="/get_all" method="post">
+                <input onclick="update2()" type="submit" value="Save">
+                <div id="Progress_Status2">
+                    <div id="myprogressBar2"></div>
+                </div>
+                <script>
+                    function update2() {
+                        var element = document.getElementById("myprogressBar2");
+                        var width = 1;
+                        var identity = setInterval(scene, 10);
+
+                        function scene() {
+                            if (width >= 100) {
+                                clearInterval(identity);
+                            } else {
+                                width++;
+                                element.style.width = width + '%';
+                            }
+                        }
+                    }
+                </script>
+            </form>
+        </div>
+    </div>
+</div>
+
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+<p></p>
+
+<h2>템포의 개별 데이터 백업</h2>
+<p>템포의 데이터를 개별적으로 백업 받는 기능으로 하단의 Display에서 내용을 확인할 수 있습니다.</p>
+
+
+<div class="row">
+    <div class="column" style="background-color:#aaa;">
+        <h3> Accounts</h3>
+        <form action="/get_accounts" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#bbb;">
+        <h3> Account-Categories</h3>
+        <form action="/get_account_categories" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#ccc;">
+        <h3> Account-Categories</h3>
+        <form action="/get_account_category_types" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#ddd;">
+
+        <h3>Teams</h3>
+        <form action="/get_teams" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="column" style="background-color:#eee;">
+        <h3> Customers</h3>
+        <form action="/get_customers" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#fff;">
+        <h3>Holiday Schemes</h3>
+        <form action="/get_holiday_schemes" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#aaa;">
+        <h3>Permission Roles</h3>
+        <form action="/get_permission_roles" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+    <div class="column" style="background-color:#bbb;">
+
+        <h3>Work Attributes</h3>
+        <form action="/get_work_attributes" method="post">
+            <button type="submit" class="btn btn-success">Save</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    // Get the elements with class="column"
+    var elements = document.getElementsByClassName("column");
+
+    // Declare a loop variable
+    var i;
+
+    // List View
+    function listView() {
+        for (i = 0; i < elements.length; i++) {
+            elements[i].style.width = "100%";
+        }
+    }
+
+    // Grid View
+    function gridView() {
+        for (i = 0; i < elements.length; i++) {
+            elements[i].style.width = "25%";
+        }
+    }
+
+    /* Optional: Add active class to the current button (highlight it) */
+    var container = document.getElementById("btnContainer");
+    var btns = container.getElementsByClassName("btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].addEventListener("click", function () {
+            var current = document.getElementsByClassName("active");
+            current[0].className = current[0].className.replace(" active", "");
+            this.className += " active";
+        });
+    }
+</script>
+
+<h3>Display</h3>
+<table class="table small">
+    {% for i in results %}
+        <tr>
+            <td> {{ i }} </td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
